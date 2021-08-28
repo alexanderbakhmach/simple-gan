@@ -10,7 +10,7 @@ class Generator(nn.Module):
     even number from noise vector.
     """
 
-    def __init__(self, input_length: int):
+    def __init__(self, input_length: int) -> None:
         """The constructor. Takes the input
         length to construct the correct network layers.
 
@@ -18,6 +18,9 @@ class Generator(nn.Module):
             input_length (int): The size of the input vector
                                 that our generator network can take as
                                 an input.
+
+        Returns:
+            None
         """
         if not isinstance(input_length, int):
             raise ValueError("The input_length must be of type int.")
@@ -27,9 +30,9 @@ class Generator(nn.Module):
         output_length = input_length
 
         self._dense_layer = nn.Linear(input_length, output_length)
-        self._avtivation = nn.Sigmoid()
+        self._activation = nn.Sigmoid()
 
-    def __call__(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Takes the vector x and pass it throught network
 
         Args:
@@ -43,7 +46,7 @@ class Generator(nn.Module):
 
         logging.debug("Passing the X throught network.")
 
-        return self._avtivation(self._dense_layer(x))
+        return self._activation(self._dense_layer(x))
 
 
 class Discriminator(nn.Module):
@@ -54,7 +57,7 @@ class Discriminator(nn.Module):
 
     OUTPUT_LENGTH = 1
 
-    def __init__(self, input_length: int):
+    def __init__(self, input_length: int) -> None:
         """The constructor. Takes the input
         length to construct the correct network layers.
 
@@ -62,6 +65,9 @@ class Discriminator(nn.Module):
             input_length (int): The size of the input vector
                                 that our discriminator network can take as
                                 an input.
+
+        Returns:
+            None
         """
         if not isinstance(input_length, int):
             raise ValueError("The input_length must be of type int.")
@@ -71,7 +77,7 @@ class Discriminator(nn.Module):
         self._dense_layer = nn.Linear(input_length, self.OUTPUT_LENGTH)
         self._activation = nn.Sigmoid()
 
-    def __call__(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Takes the vector x and pass it throught network
 
         Args:
@@ -86,4 +92,4 @@ class Discriminator(nn.Module):
 
         logging.debug("Passing the X throught network.")
 
-        return self._avtivation(self._dense_layer(x))
+        return self._activation(self._dense_layer(x))

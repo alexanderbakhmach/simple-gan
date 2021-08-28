@@ -1,24 +1,7 @@
-import logging
 import numpy as np
 import math
 
 from typing import List, Tuple
-
-
-def get_logger() -> logging.Logger:
-    """Intanciate logger for current app.
-
-    Returns:
-        logging.Logger: The new logger to use.
-    """
-    logging.basicConfig()
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.INFO)
-
-    return logger
-
-
-logger = get_logger()
 
 
 def int2binlist(number: int) -> List[int]:
@@ -33,6 +16,20 @@ def int2binlist(number: int) -> List[int]:
             List[int]: The list of integers.
     """
     return list(map(int, list(bin(number))[2:]))
+
+
+def input_len_from_number(number: int) -> int:
+    """Calculate the number of array elements
+    needed to contains all bytes digist from the binary
+    representation of the given number.
+
+    Args:
+        number (int): The number we want to get binary rep list size.
+
+    Returns:
+        int: The number of list elements to containt the number bytes digits.
+    """
+    return len(int2binlist(number))
 
 
 def generate_even_datasets_batch(
@@ -51,14 +48,13 @@ def generate_even_datasets_batch(
                                        and the second is the array of labels.
 
     """
+    max_bytes_number = input_len_from_number(max_int)
     max_int = int(max_int / 2)
-    sampled_integers = np.random.randint(0, max_int, batch_size)
+
+    sampled_integers = np.random.randint(1, max_int, batch_size)
     sampled_integers *= 2
 
     labels = [1] * batch_size
-
-    max_sample_int = sampled_integers.max()
-    max_bytes_number = len(int2binlist(max_sample_int))
 
     data = np.zeros((batch_size, max_bytes_number))
 
@@ -69,7 +65,17 @@ def generate_even_datasets_batch(
     return labels, data
 
 
-if __name__ == "__main__":
-    logger.info("Start creating the dataset")
-
-    logger.info(generate_even_datasets_batch(10))
+def convert_float_matrix_to_int_list(
+    float_matrix: np.array, threshold: float = 0.5
+) -> List[int]:
+    """Converts generated output in binary list form to a list of integers
+    Args:
+        float_matrix: A matrix of values between 0 and 1 which we want to threshold and convert to
+            integers
+        threshold: The cutoff value for 0 and 1 thresholding.
+    Returns:
+        A list of integers.
+    """
+    return [
+        int("".join([str(int(y)) for y in x]), 2) for x in float_matrix >= threshold
+    ]
